@@ -1,0 +1,20 @@
+[
+  {
+    "scenario": "OK",
+    "code": 0,
+    "stdout": "DuckDNS update: OK\n",
+    "stderr": ""
+  },
+  {
+    "scenario": "KO",
+    "code": 1,
+    "stdout": "",
+    "stderr": "DuckDNS update: rejected; check the token and subdomain.\n"
+  },
+  {
+    "scenario": "network failure",
+    "code": 1,
+    "stdout": "",
+    "stderr": "DuckDNS update: network request failed; will retry.\n"
+  }
+]

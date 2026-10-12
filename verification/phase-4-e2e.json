@@ -1,0 +1,4 @@
+{
+  "code": 0,
+  "output": "npm notice run pocket-expense@0.1.0 test:e2e\nnpm notice run playwright test\n\nRunning 4 tests using 1 worker\n\n  ok 1 e2e\\backup.spec.ts:2:1 › 다운로드 백업·미리보기 취소·전체 교체 복원·통계 (2.5s)\n  ok 2 e2e\\calendar.spec.ts:2:1 › 월/달력 합계와 12월-1월 경계 (1.0s)\n  ok 3 e2e\\expense-crud.spec.ts:2:1 › 지출 CRUD와 새로고침 영속성 (976ms)\n  ok 4 e2e\\expense-crud.spec.ts:3:1 › 미저장 편집 이탈 취소 (533ms)\n\n  4 passed (7.0s)\n"
+}

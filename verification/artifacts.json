@@ -1,0 +1,55 @@
+{
+  "manifest": {
+    "name": "나의 지출 · Pocket Expense",
+    "short_name": "나의 지출",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f4f7f3",
+    "theme_color": "#176e56",
+    "lang": "ko",
+    "scope": "/",
+    "icons": [
+      {
+        "src": "/icons/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/icons/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/icons/icon-maskable-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ]
+  },
+  "distFiles": [
+    "dist/apple-touch-icon.png",
+    "dist/assets/index-CQdm7BcS.js",
+    "dist/assets/index-DnAvfUey.css",
+    "dist/assets/workbox-window.prod.es5-Bd17z0YL.js",
+    "dist/favicon.svg",
+    "dist/icons/icon-192.png",
+    "dist/icons/icon-512.png",
+    "dist/icons/icon-maskable-512.png",
+    "dist/index.html",
+    "dist/manifest.webmanifest",
+    "dist/sw.js",
+    "dist/workbox-2fbc6a65.js",
+    "dist/_headers"
+  ],
+  "publicAssets": [
+    "public/apple-touch-icon.png",
+    "public/favicon.svg",
+    "public/icons/icon-192.png",
+    "public/icons/icon-512.png",
+    "public/icons/icon-maskable-512.png",
+    "public/_headers"
+  ],
+  "personalBackupInDist": false,
+  "sourceNetworkCalls": false
+}

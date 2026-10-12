@@ -1,0 +1,5 @@
+{
+  "code": 0,
+  "stdout": "\nRunning 2 tests using 1 worker\n\n  ok 1 e2e\\expense-crud.spec.ts:2:1 › 지출 CRUD와 새로고침 영속성 (1.4s)\n  ok 2 e2e\\expense-crud.spec.ts:3:1 › 미저장 편집 이탈 취소 (479ms)\n\n  2 passed (4.0s)\n",
+  "stderr": "npm notice run pocket-expense@0.1.0 test:e2e\nnpm notice run playwright test\n"
+}

@@ -1,0 +1,18 @@
+{
+  "compose": {
+    "code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "shellSyntax": {
+    "code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "caddy": {
+    "code": 0,
+    "stdout": "Valid configuration\n",
+    "stderr": "{\"level\":\"info\",\"ts\":1791794062.3010612,\"msg\":\"using config from file\",\"file\":\"deploy/Caddyfile\"}\n{\"level\":\"info\",\"ts\":1791794062.3026335,\"msg\":\"adapted config to JSON\",\"adapter\":\"caddyfile\"}\n{\"level\":\"info\",\"ts\":1791794062.3026335,\"logger\":\"tls.cache.maintenance\",\"msg\":\"started background certificate maintenance\",\"cache\":\"0x133d753e2300\"}\n{\"level\":\"info\",\"ts\":1791794062.3026335,\"logger\":\"http.auto_https\",\"msg\":\"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS\",\"server_name\":\"srv0\",\"https_port\":443}\n{\"level\":\"info\",\"ts\":1791794062.303149,\"logger\":\"http.auto_https\",\"msg\":\"enabling automatic HTTP->HTTPS redirects\",\"server_name\":\"srv0\"}\n{\"level\":\"info\",\"ts\":1791794062.303149,\"logger\":\"tls.cache.maintenance\",\"msg\":\"stopped background certificate maintenance\",\"cache\":\"0x133d753e2300\"}\n{\"level\":\"info\",\"ts\":1791794062.303149,\"logger\":\"http\",\"msg\":\"servers shutting down with eternal grace period\"}\n"
+  },
+  "dockerEngine": "Unavailable: docker_engine named pipe missing. Image build/container startup/TLS issuance not performed."
+}

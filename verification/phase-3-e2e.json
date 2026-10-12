@@ -1,0 +1,5 @@
+{
+  "code": 0,
+  "stdout": "\nRunning 3 tests using 1 worker\n\n  ok 1 e2e\\calendar.spec.ts:2:1 › 월/달력 합계와 12월-1월 경계 (1.3s)\n  ok 2 e2e\\expense-crud.spec.ts:2:1 › 지출 CRUD와 새로고침 영속성 (993ms)\n  ok 3 e2e\\expense-crud.spec.ts:3:1 › 미저장 편집 이탈 취소 (528ms)\n\n  3 passed (5.1s)\n",
+  "stderr": "npm notice run pocket-expense@0.1.0 test:e2e\nnpm notice run playwright test\n"
+}

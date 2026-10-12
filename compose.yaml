@@ -1,0 +1,55 @@
+name: pocket-expense
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pocket-expense-web:local
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: "${DUCKDNS_SUBDOMAIN:?Set DUCKDNS_SUBDOMAIN in .env}.duckdns.org"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  duckdns:
+    image: curlimages/curl:8.22.0@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
+    restart: unless-stopped
+    # Read the host-protected secret file; no privileged mode or capabilities.
+    user: "0:0"
+    entrypoint: ["/bin/sh", "/opt/duckdns/update.sh"]
+    environment:
+      DUCKDNS_SUBDOMAIN: "${DUCKDNS_SUBDOMAIN:?Set DUCKDNS_SUBDOMAIN in .env}"
+    volumes:
+      - ./deploy/duckdns-update.sh:/opt/duckdns/update.sh:ro
+    secrets:
+      - duckdns_token
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "2"
+
+secrets:
+  duckdns_token:
+    file: ./deploy/duckdns-token.txt
+
+volumes:
+  caddy_data:
+  caddy_config:

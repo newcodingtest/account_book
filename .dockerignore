@@ -1,0 +1,25 @@
+# Allow only files explicitly required by the Dockerfile.
+**
+!Dockerfile
+!package.json
+!package-lock.json
+!index.html
+!tsconfig.json
+!vite.config.ts
+!eslint.config.js
+!playwright.config.ts
+!src/
+!src/**
+!public/
+!public/**
+!tests/
+!tests/**
+!e2e/
+!e2e/**
+!deploy/
+!deploy/Caddyfile
+# Private files are excluded even if accidentally placed below public/.
+**/.env*
+**/backups/**
+**/pocket-expense-backup-*.json
+**/duckdns-token.txt

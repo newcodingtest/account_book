@@ -1,0 +1,5 @@
+{
+  "code": 0,
+  "stdout": "\nRunning 2 tests using 1 worker\n\n  ok 1 e2e\\guide.spec.ts:3:3 › 안내 직접 접근·기기 선택·오프라인·백업 이동 light (1.3s)\n  ok 2 e2e\\guide.spec.ts:3:3 › 안내 직접 접근·기기 선택·오프라인·백업 이동 dark (1.2s)\n\n  2 passed (5.1s)\n",
+  "stderr": "npm notice run pocket-expense@0.1.0 test:e2e\nnpm notice run playwright test guide.spec.ts\n"
+}

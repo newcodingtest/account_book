@@ -1,0 +1,6 @@
+{
+  "command": "Node .tools/phase1.cjs (Playwright Chrome)",
+  "exitCode": 0,
+  "stdout": "PASS: empty shell, IndexedDB, service worker",
+  "notes": "Phase 1 build+preview에서 빈 앱, IndexedDB probe DB 생성, service worker ready를 실제 확인했습니다."
+}
