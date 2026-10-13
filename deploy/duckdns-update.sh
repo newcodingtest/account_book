@@ -27,9 +27,9 @@ update_dns() {
   if response=$(curl --ipv4 --silent --fail --connect-timeout 10 --max-time 30 --config - 2>/dev/null <<EOF
 url = "https://www.duckdns.org/update"
 get
- data-urlencode = "domains=$DUCKDNS_SUBDOMAIN"
- data-urlencode = "token=$token"
- data-urlencode = "ip="
+data-urlencode = "domains=$DUCKDNS_SUBDOMAIN"
+data-urlencode = "token=$token"
+data-urlencode = "ip="
 EOF
   ); then
     if [ "$response" = "OK" ]; then
@@ -38,7 +38,8 @@ EOF
     fi
     printf '%s\n' 'DuckDNS update: rejected; check the token and subdomain.' >&2
   else
-    printf '%s\n' 'DuckDNS update: network request failed; will retry.' >&2
+    curl_status=$?
+    printf 'DuckDNS update: request failed (curl exit %s); will retry.\n' "$curl_status" >&2
   fi
   return 1
 }

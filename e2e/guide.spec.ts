@@ -49,7 +49,7 @@ for (const colorScheme of ["light", "dark"] as const)
       await expect(page.getByText("아직 지출 기록이 없어요")).toBeVisible();
       await expect(page).not.toHaveURL(/#guide$/);
       await page
-        .getByRole("button", { name: "사용 안내", exact: true })
+        .getByRole("button", { name: "홈 화면 추가", exact: true })
         .click();
       await expect(
         page.getByRole("heading", {

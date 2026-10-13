@@ -12,7 +12,9 @@ import { SettingsPage } from "../features/settings/SettingsPage";
 import { MonthSelector } from "../shared/components/MonthSelector";
 import { localDate, shiftMonth } from "../shared/utils/dates";
 import { GuidePage } from "../features/guide/GuidePage";
+import { useAppInstall } from "../shared/utils/useAppInstall";
 export default function App() {
+  const installation = useAppInstall();
   const [tab, setTab] = useState(location.hash === "#guide" ? "안내" : "홈");
   const [month, setMonth] = useState(localDate().slice(0, 7));
   const [editor, setEditor] = useState<{ expense: Expense | null } | null>(
@@ -133,10 +135,11 @@ export default function App() {
         <div className="header-actions">
           <button
             disabled={busy}
-            aria-label="사용 안내"
+            className="install-guide-link"
+            aria-label="홈 화면 추가"
             onClick={() => navigate("안내")}
           >
-            ?
+            홈 화면 추가
           </button>
           <button
             disabled={busy}
@@ -162,6 +165,7 @@ export default function App() {
       )}
       {tab === "안내" ? (
         <GuidePage
+          installation={installation}
           offlineReady={
             offlineReady || Boolean(navigator.serviceWorker?.controller)
           }

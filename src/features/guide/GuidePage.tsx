@@ -1,5 +1,6 @@
 import { StorageNotice } from "../../shared/components/StorageNotice";
 import { useState } from "react";
+import type { useAppInstall } from "../../shared/utils/useAppInstall";
 
 const instructions = {
   android: [
@@ -15,18 +16,22 @@ const instructions = {
 };
 
 export function GuidePage({
+  installation,
   offlineReady,
   onStart,
   onBackup,
 }: {
+  installation: ReturnType<typeof useAppInstall>;
   offlineReady: boolean;
   onStart: () => void;
   onBackup: () => void;
 }) {
-  const [device, setDevice] = useState<"android" | "iphone">("android");
-  const installed =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  const [device, setDevice] = useState<"android" | "iphone">(() =>
+    /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+      ? "iphone" : "android",
+  );
+  const { installed, available, busy, message, install } = installation;
   const local = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
   return (
     <div className="guide-page">
@@ -58,6 +63,18 @@ export function GuidePage({
           <p className="notice">현재 홈 화면 앱으로 실행 중이에요.</p>
         ) : (
           <p>설치 후에는 홈 화면의 같은 아이콘으로 계속 사용하세요.</p>
+        )}
+        {!installed && (available || busy) && (
+          <button
+            className="primary full"
+            disabled={busy}
+            onClick={() => void install()}
+          >
+            {busy ? "설치 확인 중…" : "내 휴대폰에 추가하기"}
+          </button>
+        )}
+        {!installed && message && (
+          <p className="notice" role="status">{message}</p>
         )}
         {local && (
           <p className="notice">
