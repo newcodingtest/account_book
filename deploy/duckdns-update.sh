@@ -12,15 +12,11 @@ if [ "${#DUCKDNS_SUBDOMAIN}" -gt 63 ]; then
   exit 2
 fi
 
-secret_file="${DUCKDNS_TOKEN_FILE:-/run/secrets/duckdns_token}"
-if [ ! -r "$secret_file" ]; then
-  printf '%s\n' 'DuckDNS: token file is missing or unreadable.' >&2
-  exit 2
-fi
-token="$(tr -d '\r\n' < "$secret_file")"
+token="${DUCKDNS_TOKEN:-}"
+unset DUCKDNS_TOKEN
 case "$token" in
   ""|*[!a-zA-Z0-9-]*)
-    printf '%s\n' 'DuckDNS: invalid token file; paste only the account token.' >&2
+    printf '%s\n' 'DuckDNS: set DUCKDNS_TOKEN in .env to the account token.' >&2
     exit 2
     ;;
 esac

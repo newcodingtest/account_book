@@ -5,4 +5,4 @@ cd "$script_dir/.."
 DUCKDNS_UID=$(id -u)
 DUCKDNS_GID=$(id -g)
 export DUCKDNS_UID DUCKDNS_GID
-exec docker compose --env-file .env -f compose.yaml -f docs/compose.mac.yaml "$@"
+exec docker compose --env-file .env -f compose.yaml -f deploy/compose.mac.yaml "$@"

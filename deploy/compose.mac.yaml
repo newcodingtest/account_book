@@ -2,4 +2,4 @@
 # Use the Mac user's UID/GID for the updater; the base file drops capabilities.
 services:
   duckdns:
-    user: "${DUCKDNS_UID:?Use docs/docker-mac.sh}:${DUCKDNS_GID:?Use docs/docker-mac.sh}"
+    user: "${DUCKDNS_UID:?Use deploy/docker-mac.sh}:${DUCKDNS_GID:?Use deploy/docker-mac.sh}"
