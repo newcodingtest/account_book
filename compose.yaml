@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_SITE_URL: "https://${DOMAIN:?Set DOMAIN in .env}"
     image: pocket-expense-web:local
     restart: unless-stopped
     environment:

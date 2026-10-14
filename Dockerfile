@@ -8,6 +8,8 @@ COPY src ./src
 COPY public ./public
 COPY tests ./tests
 COPY e2e ./e2e
+ARG VITE_SITE_URL
+ENV VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run lint && npm run typecheck && npm run test && npm run build
 
 # The runtime contains only Caddy and public static assets, with no Node API.

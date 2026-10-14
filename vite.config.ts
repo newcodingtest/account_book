@@ -1,7 +1,8 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
-export default defineConfig({
+import { loadEnv } from "vite";
+export default defineConfig(({ mode }) => ({
   preview: {
     headers: {
       "Content-Security-Policy":
@@ -11,6 +12,18 @@ export default defineConfig({
     },
   },
   plugins: [
+    {
+      name: "share-metadata",
+      transformIndexHtml(html) {
+        const env = loadEnv(mode, ".", "VITE_");
+        const url = new URL(env.VITE_SITE_URL || "http://localhost:5173");
+        if (!["http:", "https:"].includes(url.protocol)) {
+          throw new Error("VITE_SITE_URL must be an HTTP(S) URL");
+        }
+        const origin = url.origin.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+        return html.replaceAll("__SITE_URL__", origin);
+      },
+    },
     react(),
     VitePWA({
       registerType: "prompt",
@@ -47,4 +60,4 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}"],
   },
-});
+}));
