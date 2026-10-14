@@ -95,7 +95,7 @@ export function SettingsPage({
     if (
       !pending ||
       !window.confirm(
-        "복원하면 현재 지출 기록이 교체됩니다. 기존 데이터를 먼저 백업했나요?",
+        "현재 기록과 백업을 병합합니다. 같은 ID는 최신 수정 기록을 사용하고, 수정 시각이 같으면 현재 기록을 유지합니다. 계속할까요?",
       )
     )
       return;
@@ -104,7 +104,7 @@ export function SettingsPage({
         const result = await restoreBackup(pending.backup);
         setPending(null);
         setMessage(
-          "복원 완료: " + result.count + "건 · " + money(result.total),
+          "병합 완료: " + result.count + "건 · " + money(result.total),
         );
       } catch {
         throw new Error(
@@ -204,15 +204,16 @@ export function SettingsPage({
             {summary.start ? summary.start + " ~ " + summary.end : "기록 없음"}
           </p>
           <p>현재 로컬 기록: {pending.current}건</p>
-          <p className="error">
-            기존 데이터 전체를 교체합니다. 먼저 현재 기록을 백업하세요.
+          <p>
+            현재 기록을 유지하고 새 기록을 추가합니다. 같은 ID는 최신 수정
+            기록을 사용하며, 수정 시각이 같으면 현재 기록을 유지합니다.
           </p>
           <button
-            className="danger full"
+            className="primary full"
             disabled={busy}
             onClick={() => void restore()}
           >
-            전체 교체 복원
+            기존 기록과 병합
           </button>
           <button
             className="full"

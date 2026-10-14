@@ -29,6 +29,34 @@ const backup = (expenses = [row()]) => ({
   exportedAt: "2026-10-12T00:00:00.000Z",
   expenses,
 });
+it("기기별 기록과 최신 수정 유지, 반복 및 빈 백업 병합", async () => {
+  const db = new PocketExpenseDatabase("merge-" + crypto.randomUUID());
+  const repo = new ExpenseRepository(db);
+  const localOnly = row();
+  const shared = row();
+  const localNewer = { ...row(), updatedAt: 3 };
+  const tied = row();
+  const remoteOnly = row();
+  const sharedNewer = { ...shared, amount: 15000, updatedAt: 2 };
+  const incoming = backup([
+    remoteOnly,
+    sharedNewer,
+    { ...localNewer, amount: 1000, updatedAt: 2 },
+    { ...tied, amount: 2000 },
+  ]);
+  try {
+    await db.expenses.bulkAdd([localOnly, shared, localNewer, tied]);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      expect(await restoreBackup(incoming, repo)).toEqual({ count: 5, total: 63000 });
+      expect(await repo.all()).toEqual(expect.arrayContaining([
+        localOnly, sharedNewer, localNewer, tied, remoteOnly,
+      ]));
+    }
+    expect(await restoreBackup(backup([]), repo)).toEqual({ count: 5, total: 63000 });
+  } finally {
+    await db.delete();
+  }
+});
 it.each([0, 1, 3])("%s건 백업 왕복과 저장 후 실제 건수/합계", async (count) => {
   const db = new PocketExpenseDatabase("backup-" + crypto.randomUUID());
   const repo = new ExpenseRepository(db);
@@ -92,7 +120,7 @@ it("일부 삽입 후 실패하면 기존 데이터 트랜잭션 롤백", async 
     next = row();
   try {
     await db.expenses.add(old);
-    const spy = vi.spyOn(db.expenses, "bulkAdd").mockImplementation(() =>
+    const spy = vi.spyOn(db.expenses, "bulkPut").mockImplementation(() =>
       db.expenses.add(next).then(() => {
         throw new Error("injected partial failure");
       }),

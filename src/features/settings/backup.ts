@@ -57,10 +57,20 @@ export async function restoreBackup(
   repo: ExpenseRepository = repository,
 ) {
   const validated = backupSchema.parse(backup);
-  const expected = previewBackup(validated);
   return repo.database.transaction("rw", repo.database.expenses, async () => {
-    await repo.database.expenses.clear();
-    await repo.database.expenses.bulkAdd(validated.expenses);
+    const existing = await repo.database.expenses.toArray();
+    const merged = new Map(existing.map((expense) => [expense.id, expense]));
+    const changes = validated.expenses.filter((expense) => {
+      const current = merged.get(expense.id);
+      if (current && current.updatedAt >= expense.updatedAt) return false;
+      merged.set(expense.id, expense);
+      return true;
+    });
+    const expected = {
+      count: merged.size,
+      total: safeSum([...merged.values()].map((expense) => expense.amount)),
+    };
+    await repo.database.expenses.bulkPut(changes);
     const actual = await repo.database.expenses.toArray();
     const summary = {
       count: actual.length,
