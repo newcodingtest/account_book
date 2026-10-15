@@ -179,6 +179,27 @@ export default function App() {
         />
       ) : (
         <>
+          {tab === "홈" && !installation.installed && (
+            <section className="home-install" aria-labelledby="home-install-title">
+              <img src="/icons/icon-192.png" alt="" width="52" height="52" />
+              <div className="home-install-content">
+                <p className="home-install-label">더 편하게 쓰는 방법</p>
+                <h2 id="home-install-title">꼭 홈 화면에 추가해 주세요</h2>
+                <p>
+                  매번 주소를 찾을 필요 없이, 아이콘 한 번으로 바로 열어요.
+                  홈 화면에서 앱처럼 편하게 지출을 기록하세요.
+                </p>
+                <button
+                  className="primary"
+                  disabled={busy}
+                  onClick={() => navigate("안내")}
+                >
+                  홈 화면 추가하기 <span aria-hidden="true">→</span>
+                </button>
+                <small>Android·iPhone 추가 방법을 안내해 드려요.</small>
+              </div>
+            </section>
+          )}
           <MonthSelector month={month} onChange={setMonth} />
           {!data ? (
             <p role="status">기록을 불러오는 중…</p>

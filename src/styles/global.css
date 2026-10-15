@@ -683,6 +683,66 @@ h3 {
   white-space: nowrap;
   font-size: 12px;
 }
+.home-install {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 20px;
+  background: #e8f3ec;
+  border: 2px solid #176e56;
+  box-shadow: 0 5px 18px #176e5610;
+}
+.home-install img {
+  flex-shrink: 0;
+  border-radius: 14px;
+}
+.home-install-content {
+  min-width: 0;
+}
+.home-install .home-install-label {
+  margin: 0 0 5px;
+  color: #176e56;
+  font-size: 12px;
+  font-weight: 700;
+}
+.home-install h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  letter-spacing: -0.6px;
+  line-height: 1.4;
+}
+.home-install p {
+  margin: 0 0 16px;
+  font-size: 14px;
+}
+.home-install button {
+  width: 100%;
+}
+.home-install small {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #486253;
+}
+@media (max-width: 360px) {
+  .home-install {
+    flex-direction: column;
+    padding: 18px;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .home-install {
+    background: #203d30;
+    border-color: #78bc95;
+  }
+  .home-install .home-install-label {
+    color: #a9e0bc;
+  }
+  .home-install small {
+    color: #c0d5c5;
+  }
+}
 @media (max-width: 360px) {
   .app-header {
     flex-wrap: wrap;
