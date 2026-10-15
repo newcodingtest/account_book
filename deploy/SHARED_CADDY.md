@@ -1,8 +1,15 @@
 # Mac mini 공용 Caddy 배포
 
-공용 Caddy가 여러 프로젝트의 HTTPS와 80/443 포트를 관리합니다. 앱 이미지의 Caddy는 내부 HTTP 정적 파일 제공만 담당하며 기존 보안 헤더와 PWA 캐시 정책을 유지합니다.
+공용 Caddy가 여러 프로젝트의 HTTPS와 80/443 포트를 관리합니다. account 앱은 Nginx로 내부 HTTP 정적 파일을 제공하며 기존 보안 헤더와 PWA 캐시 정책을 유지합니다. account 이미지에는 Caddy가 포함되지 않습니다.
 
-휴대폰 → 공유기 → 공용 Caddy(HTTPS) → pocket-expense-web:80 → 정적 앱
+휴대폰 → 공유기 → 공용 Caddy(HTTPS) → account Nginx(pocket-expense-web:80) → 정적 앱
+
+| 역할 | 배포 파일 | 실행 이미지 |
+|---|---|---|
+| account 앱 | 루트 `Dockerfile`, `compose.yaml`, `deploy/nginx.conf` | Nginx + 앱 빌드 결과 |
+| 공용 HTTPS 프록시 | `deploy/shared-proxy/`를 독립 서버 폴더로 복사 | Caddy |
+
+Dockerfile의 Node 단계는 빌드 시에만 사용합니다. 최종 앱 이미지에는 Nginx와 `dist`만 들어갑니다. 앱 빌드 컨텍스트에서는 공용 프록시 템플릿도 제외됩니다.
 
 ## 서버 공용 구성 설치
 
@@ -107,10 +114,14 @@ docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
 앱 업데이트는 프로젝트 루트에서 `docker compose up -d --build web`으로 적용합니다. 프로젝트 `stop`·`down`은 공용 프록시를 중지하지 않습니다. 도메인 변경 시 공용 사이트 설정 변경과 앱 재빌드가 모두 필요합니다.
 
+기존 내부 Caddy에서 Nginx로 전환할 때도 같은 명령으로 웹 컨테이너만 교체합니다. 별칭과 내부 포트 80을 유지하므로 공용 Caddy 설정은 그대로 사용합니다.
+
 기존 앱이 80/443을 점유한다면 새 앱 구성으로 재생성한 뒤 공용 프록시를 시작합니다. 전환 중 잠시 접속이 중단됩니다. 기존 인증서 볼륨은 삭제하지 마세요. 새 공용 볼륨 `mac-mini-caddy-data`를 쓰면 인증서를 새로 발급합니다. 기존 인증서를 유지하려면 `docker volume ls`로 실제 이름을 확인하고 공용 Compose의 `caddy_data`를 그 이름의 `external: true` 볼륨으로 연결합니다. 공용 볼륨을 삭제하는 `down -v`는 일반 종료에 사용하지 않습니다.
 
 사용자 지출은 휴대폰 IndexedDB에 저장되며 인증서 볼륨과 무관합니다. 동일한 도메인을 유지하세요. 도메인을 바꾸면 이전 주소에서 JSON 백업 후 새 주소에서 복원합니다.
 
 ## 검증 범위
 
-Compose 설정 구문 검증은 통과했습니다. 이미지 빌드, 컨테이너 연결과 공인 HTTPS 발급은 실제 Mac에서 위 명령으로 확인해야 합니다.
+앱/공용 프록시 Compose 구문 검증과 Nginx 1.30.6 설정 검증이 통과했습니다. 로컬 Nginx에서 HTML·SW·Manifest 200, Manifest MIME, 보안 헤더, 해시 자산 immutable 캐시, 나머지 파일 no-cache, 없는 파일 404를 확인했습니다. 로컬 검증은 Windows용 Nginx에서 경로와 수신 포트를 바꿔 수행했습니다. Docker 엔진이 실행되지 않아 Linux 이미지 빌드, 컨테이너 연결과 공인 HTTPS 발급은 실제 Mac에서 위 명령으로 확인해야 합니다.
+
+Nginx 이미지의 버전과 digest는 공식 레지스트리에서 확인해 고정했습니다. 헤더 상속 동작은 [Nginx 공식 문서](https://nginx.org/en/docs/http/ngx_http_headers_module.html)를 기준으로 설정했습니다.

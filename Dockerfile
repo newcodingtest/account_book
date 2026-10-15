@@ -12,7 +12,7 @@ ARG VITE_SITE_URL
 ENV VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run lint && npm run typecheck && npm run test && npm run build
 
-# Internal HTTP static server; the independent shared proxy manages public TLS.
-FROM caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+# Account runtime: Nginx serves HTTP only. Shared Caddy is deployed separately.
+FROM nginx:1.30.6-alpine@sha256:ff8328b4279ec385af48cde9ef486e7165ad74b7065cb3cd86c377384e2e2dd5
 COPY --from=build /app/dist /srv
-COPY deploy/Caddyfile /etc/caddy/Caddyfile
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf

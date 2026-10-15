@@ -4,7 +4,7 @@ React + TypeScript 기반의 한국어 지출 관리 PWA입니다. 여러 사용
 
 ## Mac mini 배포
 
-현재 배포는 **서버 공용 Caddy + 프로젝트 내부 HTTP 서버**로 분리되어 있습니다. 먼저 [공용 프록시 배포 안내](deploy/SHARED_CADDY.md)를 따라 진행하세요. 현재 프로젝트는 80/443을 직접 점유하지 않으며, 프로젝트 중지·제거는 공용 Caddy에 영향을 주지 않습니다.
+현재 배포는 **서버 공용 Caddy + account Nginx 정적 서버**로 분리되어 있습니다. 먼저 [공용 프록시 배포 안내](deploy/SHARED_CADDY.md)를 따라 진행하세요. account 이미지에는 Caddy가 포함되지 않습니다. 현재 프로젝트는 80/443을 직접 점유하지 않으며, 프로젝트 중지·제거는 공용 Caddy에 영향을 주지 않습니다.
 
 Docker Desktop을 실행하고 프로젝트 전체를 Mac에 복사합니다. 아래 명령은 `compose.yaml`과 `package.json`이 있는 프로젝트 루트에서 실행합니다. Mac에 Node/npm을 별도로 설치할 필요는 없습니다.
 

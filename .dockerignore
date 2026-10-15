@@ -17,7 +17,7 @@
 !e2e/
 !e2e/**
 !deploy/
-!deploy/Caddyfile
+!deploy/nginx.conf
 # Private files are excluded even if accidentally placed below public/.
 **/.env*
 **/backups/**
