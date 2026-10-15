@@ -25,7 +25,8 @@ services:
   duckdns:
     image: curlimages/curl:8.22.0@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
     restart: unless-stopped
-    # The updater receives the token from .env; no privileged mode or capabilities.
+    # Compose reads .env directly; no Mac-specific UID/GID override is required.
+    # The updater receives the token via environment, not a private mounted file.
     user: "0:0"
     entrypoint: ["/bin/sh", "/opt/duckdns/update.sh"]
     environment:

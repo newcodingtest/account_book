@@ -49,10 +49,10 @@ DUCKDNS_TOKEN=본인의_DuckDNS_토큰
 DOMAIN은 앱 빌드 주소이며 공용 사이트 파일의 도메인과 일치해야 합니다. APP_UPSTREAM은 사이트 파일에서 사용하는 고유 네트워크 별칭입니다. DuckDNS 주소를 등록하고 토큰을 입력합니다. `.env`와 토큰은 공유하지 않습니다.
 
 ```bash
-sh deploy/docker-mac.sh config --quiet
-sh deploy/docker-mac.sh run --rm duckdns --once
-sh deploy/docker-mac.sh up -d --build
-sh deploy/docker-mac.sh ps
+docker compose config --quiet
+docker compose run --rm duckdns --once
+docker compose up -d --build
+docker compose ps
 ```
 
 DuckDNS는 `DuckDNS update: OK`를 확인합니다. 현재 갱신기는 이 프로젝트에서 실행하며 5분마다 갱신합니다. 서버 공용 DNS 갱신기로 이관할 경우 같은 주소의 갱신기를 중복 운영하지 않도록 조정하세요.
@@ -105,7 +105,7 @@ docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
 ## 업데이트와 기존 배포 전환
 
-앱 업데이트는 프로젝트 루트에서 `sh deploy/docker-mac.sh up -d --build web`으로 적용합니다. 프로젝트 `stop`·`down`은 공용 프록시를 중지하지 않습니다. 도메인 변경 시 공용 사이트 설정 변경과 앱 재빌드가 모두 필요합니다.
+앱 업데이트는 프로젝트 루트에서 `docker compose up -d --build web`으로 적용합니다. 프로젝트 `stop`·`down`은 공용 프록시를 중지하지 않습니다. 도메인 변경 시 공용 사이트 설정 변경과 앱 재빌드가 모두 필요합니다.
 
 기존 앱이 80/443을 점유한다면 새 앱 구성으로 재생성한 뒤 공용 프록시를 시작합니다. 전환 중 잠시 접속이 중단됩니다. 기존 인증서 볼륨은 삭제하지 마세요. 새 공용 볼륨 `mac-mini-caddy-data`를 쓰면 인증서를 새로 발급합니다. 기존 인증서를 유지하려면 `docker volume ls`로 실제 이름을 확인하고 공용 Compose의 `caddy_data`를 그 이름의 `external: true` 볼륨으로 연결합니다. 공용 볼륨을 삭제하는 `down -v`는 일반 종료에 사용하지 않습니다.
 

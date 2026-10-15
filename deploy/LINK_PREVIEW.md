@@ -2,7 +2,7 @@
 
 HTML에 Open Graph 제목·설명과 기존 512px PNG 앱 아이콘을 지정합니다. Docker 빌드에서는 Compose가 `.env`의 `DOMAIN`으로 HTTPS 절대 주소를 설정합니다.
 
-적용: 프로젝트 루트에서 `sh deploy/docker-mac.sh up -d --build web`을 실행합니다. 도메인을 변경할 때도 다시 빌드합니다.
+적용: 프로젝트 루트에서 `docker compose up -d --build web`을 실행합니다. 도메인을 변경할 때도 다시 빌드합니다.
 
 Docker 외 정적 호스팅은 빌드 환경 변수 `VITE_SITE_URL`을 실제 사이트 주소(예: `https://example.pages.dev`)로 설정합니다. 미설정 시 로컬 개발 주소를 사용합니다.
 
