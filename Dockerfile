@@ -12,7 +12,7 @@ ARG VITE_SITE_URL
 ENV VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run lint && npm run typecheck && npm run test && npm run build
 
-# The runtime contains only Caddy and public static assets, with no Node API.
+# Internal HTTP static server; the independent shared proxy manages public TLS.
 FROM caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
 COPY --from=build /app/dist /srv
 COPY deploy/Caddyfile /etc/caddy/Caddyfile

@@ -8,15 +8,12 @@ services:
         VITE_SITE_URL: "https://${DOMAIN:?Set DOMAIN in .env}"
     image: pocket-expense-web:local
     restart: unless-stopped
-    environment:
-      APP_DOMAIN: "${DOMAIN:?Set DOMAIN in .env}"
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
+    expose:
+      - "80"
+    networks:
+      proxy:
+        aliases:
+          - "${APP_UPSTREAM:-pocket-expense-web}"
     security_opt:
       - no-new-privileges:true
     logging:
@@ -47,6 +44,7 @@ services:
         max-size: "1m"
         max-file: "2"
 
-volumes:
-  caddy_data:
-  caddy_config:
+networks:
+  proxy:
+    external: true
+    name: "${PROXY_NETWORK:-mac-mini-proxy}"

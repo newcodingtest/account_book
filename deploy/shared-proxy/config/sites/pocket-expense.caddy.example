@@ -1,0 +1,4 @@
+# Copy to pocket-expense.caddy and replace with your actual domain.
+your-subdomain.duckdns.org {
+	reverse_proxy pocket-expense-web:80
+}

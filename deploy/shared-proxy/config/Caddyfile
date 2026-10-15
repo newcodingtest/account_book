@@ -1,0 +1,2 @@
+# Add one file per project to sites/ and reload the shared proxy.
+import sites/*.caddy
