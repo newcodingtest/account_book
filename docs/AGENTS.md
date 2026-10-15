@@ -14,7 +14,7 @@
 4. **1인·단일 기기·오프라인 우선**을 기본 가정으로 한다. 다른 기기나 Safari 탭과 PWA 설치본 간 데이터 동기화를 약속하지 않는다. 백업 파일을 다른 기기로 수동 이동·복원할 수 있다.
 5. **백업/복원은 출시 필수 기능**이다. 브라우저의 IndexedDB는 영구 저장 보장이 없으며, 기기 변경·브라우저 데이터 삭제·저장소 정리로 유실될 수 있다. 저장소 API의 지속 저장 요청이 성공해도 수동 백업 필요성이 사라지지 않는다.
 6. **사용자 실제 지출 정보는 로컬 IndexedDB에만 저장**한다. 네트워크 업로드, 제3자 전송, 로그/분석 전송, 외부 폰트/차트 CDN을 금지한다. 서비스 워커 캐시는 앱 정적 자산에 한정한다.
-7. 정식 배포 전까지 **무과금 설계**를 유지한다. Cloudflare Pages 같은 무료 정적 호스팅이 기본 배포 대상이며, 유료 도메인·서버·배포 계정 생성은 사용자 명시적 승인 없이 수행하지 않는다.
+7. 정식 배포 전까지 **무과금 설계**를 유지한다. 사용자가 선택한 Mac mini Docker Compose와 공용 Caddy가 기본 배포 대상이며, 유료 도메인·서버·배포 계정 생성은 사용자 명시적 승인 없이 수행하지 않는다.
 8. 기능 구현은 **Phase 1 → 2 → 3 → 4 → 5** 순서로 진행하되, 매 단계에서 실행 가능한 상태로 만들고 lint/typecheck/test/build를 수행한다. 검증하지 않은 기능은 성공했다고 보고하지 않는다.
 9. 의존성은 **실제 설치 가능한 안정 버전**을 사용하고 lockfile(`package-lock.json`)을 커밋한다. 버전을 추측하거나 무조건 `latest`로 장기간 방치하지 않는다. Node.js는 선택 버전의 Vite와 vite-plugin-pwa 요구 조건을 충족하는 지원 중인 LTS를 사용하며 README에 명시한다.
 10. 더 큰 아키텍처보다 **안정적인 CRUD, 모바일 입력 편의성, 정확한 통계, 데이터 복구 가능성**을 우선한다. 사용자 지시가 없는 한 범위를 임의로 확장하지 않는다.
@@ -83,7 +83,7 @@
 | 아이콘         | 직접 포함 SVG / 필요 시 설치형 아이콘 패키지 | 외부 CDN 호출 금지                                           |
 | 테스트         | Vitest, Testing Library, `fake-indexeddb`    | 로직·컴포넌트·IndexedDB 테스트                               |
 | E2E/브라우저   | Playwright (개발 의존성)                     | 모바일 viewport, CRUD, 오프라인 경로 검증                    |
-| 호스팅         | Cloudflare Pages(정적 파일만)                | 무료 기본 `*.pages.dev` 주소, 서버리스가 아닌 순수 정적 호스팅 |
+| 호스팅 | Mac mini Docker Compose + 공용 Caddy | 정적 파일 제공, 서버 DB 없음 |
 | 런타임 서버    | **없음**                                     | 사용자 지출 데이터를 저장하는 서버가 없음                    |
 
 - 필요 없는 전역 상태 관리(Zustand/Redux), API 클라이언트(Axios/React Query), ORM, 백엔드 런타임을 임의 설치하지 않는다.
@@ -96,7 +96,7 @@
 1. Manifest: `name`, `short_name`, `start_url`, `scope`, `display: standalone`, `theme_color`, `background_color`, 192/512 아이콘, 가능한 maskable 아이콘 설정.
 2. `vite-plugin-pwa`의 `generateSW` 전략을 우선 사용하고 **`registerType: 'prompt'`** 를 채택한다. 입력 중 강제 새로고침해 미저장 데이터를 잃지 않도록 업데이트를 사용자 동의로 적용한다.
 3. 앱 셸(HTML, JS, CSS, 로컬 폰트/이미지)은 precache. 사용자가 가진 지출 데이터와 JSON 백업 파일을 Service Worker Cache Storage에 넣지 않는다.
-4. 배포 시 **HTTPS 필수**(로컬 개발의 `localhost`는 예외); 무료 호스팅 기본 도메인의 HTTPS 이용.
+4. 배포 시 **HTTPS 필수**(로컬 개발의 `localhost`는 예외); 공용 Caddy에서 도메인별 HTTPS 제공.
 5. 오프라인 테스트는 `vite dev`만으로 검증하지 않고 **프로덕션 `build` + `preview`** 또는 배포 환경에서 검증한다.
 6. Service Worker 업데이트 전에는 편집 중인지 확인하고 적절한 UI로 저장 또는 취소를 안내한다.
 7. 앱 내부 기본 탐색을 오프라인에서도 지원하고, 라우팅을 도입한 경우 새로고침/직접 URL 접근에 대한 SPA fallback도 검증한다.
@@ -540,8 +540,8 @@ export const db = new PocketExpenseDatabase();
 - [ ] Service Worker 오프라인/업데이트/SPA fallback 테스트.
 - [ ] Playwright 모바일 viewport/E2E 및 가능한 경우 실기기 테스트.
 - [ ] 접근성/키보드/safe area/오류 화면 완성.
-- [ ] Cloudflare Pages 배포 설정 및 README 절차 작성.
-- [ ] 사용자가 명시적으로 승인하면 무료 Pages 계정에 실제 정적 배포.
+- [ ] Docker Compose 배포 설정 및 공용 Caddy 운영 절차 작성.
+- [ ] 사용자가 명시적으로 지시하면 Mac mini에 실제 정적 배포.
 
 **Phase 5 완료:** 정적 호스팅 가능한 `dist/` 산출물, 개인 기록 외부 전송 없음, 오프라인 핵심 기능, 백업·복원, 설치 안내의 검증 완료.
 
@@ -573,24 +573,13 @@ export const db = new PocketExpenseDatabase();
 - 개발 환경: 로컬 `npm install`, `npm run dev`, 브라우저 오픈.
 - 오프라인 검증: `npm run build`, `npm run preview` 후 브라우저에서 사이트 최초 로드, 네트워크 차단, 새로고침 및 기록 저장.
 
-### 10.2 Cloudflare Pages 정적 배포 설정
+### 10.2 Docker Compose 배포 설정
 
-사용자 승인 후 아래 값을 사용한다.
-
-```text
-Framework preset : React (Vite)
-Build command    : npm run build
-Build output     : dist
-Production branch: main
-Domain           : <project>.pages.dev (무료 기본 주소)
-Functions/Workers: 사용하지 않음
-Database         : 사용하지 않음
-```
-
-- 사용자 백업 JSON, `.env`, 로컬 데이터가 빌드 산출물 `dist/`에 포함되지 않게 점검.
-- 프로젝트 안에서 외부 비밀키·서버 API URL을 요구하지 않는다.
-- 무료 플랜 한도, 버전별 빌드 정책 등은 **배포 당시에 공식 문서 확인**. 무료 기본 기능 범위 밖으로 확장하지 않는다.
-- Cloudflare 계정에 로그인하거나 배포를 실제 실행할 때에는 사용자 명시적 지시가 필요하다.
+- 프로젝트 루트의 Dockerfile, compose.yaml, .env.example을 사용한다.
+- 프로젝트 루트에서 `docker compose up -d --build`로 실행하며 .env를 자동으로 읽는다.
+- 공용 Caddy는 독립 디렉터리에서 실행하고 외부 Docker 네트워크 mac-mini-proxy로 앱에 연결한다.
+- 상세 배포 절차는 [공용 Caddy 배포 안내](../deploy/SHARED_CADDY.md)를 따른다.
+- 사용자 백업 JSON, .env, 실제 토큰이 이미지나 공개 파일에 포함되지 않게 한다.
 
 ### 10.3 모바일 설치 안내 문구
 
@@ -647,7 +636,6 @@ Database         : 사용하지 않음
 - [MDN IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
 - [MDN Storage quotas and eviction](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria)
 - [web.dev PWA 설치](https://web.dev/learn/pwa/installation/)
-- [Cloudflare Pages React 배포](https://developers.cloudflare.com/pages/framework-guides/deploy-a-react-site/)
 
 ---
 
@@ -657,6 +645,6 @@ Database         : 사용하지 않음
 
 - 루트 README.md는 프로젝트 소개와 문서 진입점만 담당한다.
 - docs/에는 AI가 이 프로젝트를 이해하고 작업하는 데 필요한 명세·아키텍처·개발/검증 계약·진척 문서만 둔다.
-- 배포 설명 Markdown, Dockerfile, Compose, Caddy/DuckDNS 설정, 배포 실행 스크립트와 배포 검증 기록은 deploy/에 둔다.
+- Dockerfile, compose.yaml, .env.example은 프로젝트 루트에 둔다. 공용 프록시 템플릿, Caddy/DuckDNS 설정과 배포 설명은 deploy/에 둔다. 별도 배포 실행 스크립트는 사용하지 않는다.
 - 사용자 설치·사용·백업 설명은 앱의 /#guide 안내 화면에서 관리하며 docs/에 별도 사용자 매뉴얼을 추가하지 않는다.
 - 문서별 책임을 분리하고, 다른 문서의 상세 내용을 반복하지 말고 참조한다. 파일 이동 시 상대 링크·빌드 컨텍스트·Compose 볼륨/비밀 파일 경로도 함께 검증한다.

@@ -113,4 +113,4 @@ docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
 ## 검증 범위
 
-기존 verification 파일들은 분리 이전 구성의 기록입니다. 새 구성의 이미지 빌드, 컨테이너 연결과 공인 HTTPS 발급은 실제 Mac에서 위 명령으로 확인해야 합니다.
+Compose 설정 구문 검증은 통과했습니다. 이미지 빌드, 컨테이너 연결과 공인 HTTPS 발급은 실제 Mac에서 위 명령으로 확인해야 합니다.

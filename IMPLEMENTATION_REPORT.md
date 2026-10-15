@@ -110,9 +110,9 @@
 - App.tsx·ExpenseEditor.tsx: 연결 상태, 네트워크 복귀 시 SW 업데이트 확인, 승인 전 대기, 편집 중 폐기 확인, 저장/복원 중 업데이트 비활성화, 뒤로가기 보호.
 - src/shared/components/ErrorBoundary.tsx: 렌더 오류 안내. DB 조회/합계 실패도 빈 DB로 가장하지 않음.
 - styles/global.css: 320px+, 44px 하단 탭·버튼, safe-area, 라이트/다크, 포커스.
-- public/_headers 및 vite.config.ts preview.headers: CSP·nosniff·referrer·서비스 워커 no-cache 정적 헤더 준비. CSP는 preview 브라우저 흐름에서 검증.
+- vite.config.ts preview.headers: CSP·nosniff·referrer·서비스 워커 no-cache 정적 헤더 준비. CSP는 preview 브라우저 흐름에서 검증.
 - e2e/offline.spec.ts·mobile.spec.ts·update.spec.ts: 생산 빌드의 실제 오프라인, 모바일, 저장소 실패, SW 교체.
-- README.md: 실행/설치/수동 백업/복원/Cloudflare Pages 설정/실기기 한계. .gitignore: 개인 백업·빌드·테스트 임시 파일 제외.
+- README.md: 실행/설치/수동 백업/복원/실기기 한계. .gitignore: 개인 백업·빌드·테스트 임시 파일 제외.
 
 [검증]
 - 최종 lint/typecheck/test/build 모두 종료 코드 0. 단위/DB 29개, Chrome E2E 15개 통과.
@@ -141,7 +141,6 @@
 
 - src/features/guide/GuidePage.tsx: 앱 소개, Android/iPhone 선택, 설치 3단계, 기록·오프라인·백업·기기 이동, FAQ. 기존 로컬 데이터 변경 없음.
 - App.tsx: 상단 ? 및 /#guide 직접 접속·새로고침, 홈/설정 복귀. SettingsPage.tsx: 설치·사용 안내 진입 버튼. global.css: 모바일/다크 안내 스타일.
-- DEPLOYMENT_GUIDE.md: HTTPS 정적 배포, Cloudflare Pages 수동 업로드·Git 연결, 앱 주소 변경 시 수동 백업 이동. README에 안내 진입 방법 추가.
 - lint/typecheck/test/build 실제 실행 모두 통과. 단위/DB 29개, Chrome E2E 17개 통과. 새 안내를 320px 라이트/다크 및 오프라인 새로고침에서 확인했고 화면 PNG도 시각 확인. 로그: verification/guide-checks.json, guide-e2e.json.
 - 추가 의존성·서버·개인 데이터 업로드 없음. 실제 공개 배포와 Android/iPhone 실기기 설치 검증은 대기.
 
