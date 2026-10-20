@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Expense } from "../../domain/expense";
 import { EXPENSE_CATEGORIES, categoryLabels } from "../../domain/expense";
 import { expenseInputSchema } from "../../domain/expenseSchema";
@@ -27,6 +27,21 @@ export function ExpenseEditor({
   });
   const initial = initialRef.current;
   const [form, setForm] = useState(initial);
+  const amountInput = useRef<HTMLInputElement>(null);
+  const amountCaret = useRef<number | null>(null);
+  const formattedAmount = form.amount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  useLayoutEffect(() => {
+    if (amountCaret.current === null) return;
+    const digitsBeforeCaret = amountCaret.current;
+    let position = 0;
+    let digits = 0;
+    while (position < formattedAmount.length && digits < digitsBeforeCaret) {
+      if (formattedAmount[position] !== ",") digits++;
+      position++;
+    }
+    amountInput.current?.setSelectionRange(position, position);
+    amountCaret.current = null;
+  });
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
   const [error, setError] = useState("");
@@ -124,11 +139,20 @@ export function ExpenseEditor({
                 autoFocus
                 data-autofocus
                 inputMode="numeric"
-                value={form.amount}
-                onChange={(e) => set("amount", e.target.value)}
+                ref={amountInput}
+                value={formattedAmount}
+                onChange={(e) => {
+                  const input = e.target;
+                  const raw = input.value.replace(/,/g, "");
+                  if (!/^\d*$/.test(raw) || raw.length > 9) return;
+                  amountCaret.current = input.value
+                    .slice(0, input.selectionStart ?? input.value.length)
+                    .replace(/,/g, "").length;
+                  set("amount", raw);
+                }}
                 placeholder="0"
                 required
-                maxLength={9}
+                maxLength={11}
               />
             </label>
             <fieldset className="category-grid">
