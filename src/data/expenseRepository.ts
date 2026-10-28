@@ -5,6 +5,8 @@ import {
   type ExpenseInput,
 } from "../domain/expenseSchema";
 import type { Expense } from "../domain/expense";
+import { categoryLabels } from "../domain/expense";
+import { customCategorySchema } from "../domain/expenseSchema";
 import { monthRange } from "../shared/utils/dates";
 export const sortExpenses = (a: Expense, b: Expense) =>
   b.spentOn.localeCompare(a.spentOn) ||
@@ -12,6 +14,21 @@ export const sortExpenses = (a: Expense, b: Expense) =>
   a.id.localeCompare(b.id);
 export class ExpenseRepository {
   constructor(readonly database: PocketExpenseDatabase = db) {}
+  async categories() {
+    const saved = await this.database.categories.toArray();
+    const used = await this.database.expenses.orderBy("categoryCode").uniqueKeys();
+    return [...new Set([...saved.map((c) => c.code), ...used.filter(
+      (code): code is `CUSTOM:${string}` => typeof code === "string" && code.startsWith("CUSTOM:"),
+    )])];
+  }
+  async addCategory(name: string) {
+    const normalized = name.normalize("NFC").trim();
+    const existing = Object.entries(categoryLabels).find(([, label]) => label === normalized);
+    if (existing) return existing[0] as Expense["categoryCode"];
+    const code = customCategorySchema.parse(`CUSTOM:${normalized}`);
+    await this.database.categories.put({ code });
+    return code;
+  }
   async create(input: ExpenseInput, id: string = crypto.randomUUID()) {
     const now = Date.now();
     const row = expenseSchema.parse({

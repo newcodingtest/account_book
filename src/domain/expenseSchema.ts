@@ -8,10 +8,15 @@ const optionalText = (max: number) =>
     .max(max)
     .nullable()
     .transform((v) => v || null);
+export const customCategorySchema = z.custom<`CUSTOM:${string}`>(
+  (value) => typeof value === "string" && value.startsWith("CUSTOM:") &&
+    value.slice(7).length > 0 && value.slice(7).length <= 20 &&
+    value.slice(7) === value.slice(7).trim() && !/[\r\n\t]/.test(value),
+);
 export const expenseInputSchema = z
   .object({
     amount: z.number().int().min(1).max(999_999_999),
-    categoryCode: z.enum(EXPENSE_CATEGORIES),
+    categoryCode: z.union([z.enum(EXPENSE_CATEGORIES), customCategorySchema]),
     spentOn: z.string().refine(validDate, "실제 존재하는 날짜를 입력하세요."),
     merchant: optionalText(100),
     memo: optionalText(200),

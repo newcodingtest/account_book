@@ -37,6 +37,7 @@ export async function exportBackup(repo: ExpenseRepository = repository) {
     schemaVersion: 1,
     exportedAt: new Date().toISOString(),
     expenses: await repo.all(),
+    categories: await repo.categories(),
   });
   const text = JSON.stringify(backup, null, 2);
   if (new TextEncoder().encode(text).byteLength > MAX_BACKUP_BYTES)
@@ -57,7 +58,8 @@ export async function restoreBackup(
   repo: ExpenseRepository = repository,
 ) {
   const validated = backupSchema.parse(backup);
-  return repo.database.transaction("rw", repo.database.expenses, async () => {
+  return repo.database.transaction("rw", [repo.database.expenses, repo.database.categories], async () => {
+    await repo.database.categories.bulkPut((validated.categories ?? []).map((code) => ({ code })));
     const existing = await repo.database.expenses.toArray();
     const merged = new Map(existing.map((expense) => [expense.id, expense]));
     const changes = validated.expenses.filter((expense) => {

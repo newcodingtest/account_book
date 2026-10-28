@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { expenseSchema } from "../../domain/expenseSchema";
+import { expenseSchema, customCategorySchema } from "../../domain/expenseSchema";
 export const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
 export const MAX_BACKUP_RECORDS = 50_000;
 export const backupSchema = z
@@ -8,6 +8,7 @@ export const backupSchema = z
     schemaVersion: z.literal(1),
     exportedAt: z.iso.datetime(),
     expenses: z.array(expenseSchema).max(MAX_BACKUP_RECORDS),
+    categories: z.array(customCategorySchema).max(MAX_BACKUP_RECORDS).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {

@@ -1,5 +1,5 @@
 import type { Expense } from "../../domain/expense";
-import { categoryLabels } from "../../domain/expense";
+import { categoryLabel } from "../../domain/expense";
 import { money } from "../../shared/utils/money";
 import { aggregate, compare } from "./statistics";
 export function StatisticsPage({
@@ -31,7 +31,7 @@ export function StatisticsPage({
             .map((c) => (
               <div className="category-stat" key={c.code}>
                 <div>
-                  <strong>{categoryLabels[c.code]}</strong>
+                  <strong>{categoryLabel(c.code)}</strong>
                   <span>
                     {money(c.amount)} <small>· {c.percent.toFixed(1)}%</small>
                   </span>

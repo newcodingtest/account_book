@@ -228,6 +228,8 @@ input[inputmode="numeric"] {
   margin-bottom: 8px;
 }
 .category-grid label {
+  min-width: 0;
+  overflow-wrap: anywhere;
   border: 1px solid #d7e2d8;
   border-radius: 10px;
   text-align: center;
@@ -236,6 +238,12 @@ input[inputmode="numeric"] {
   cursor: pointer;
   position: relative;
   min-height: 44px;
+}
+.category-create {
+  margin-bottom: 16px;
+}
+.category-create button + button {
+  margin-left: 8px;
 }
 .category-grid input {
   position: absolute;

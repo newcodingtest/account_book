@@ -1,5 +1,5 @@
 import type { Expense } from "../../domain/expense";
-import { categoryLabels } from "../../domain/expense";
+import { categoryLabel } from "../../domain/expense";
 import { aggregate, compare } from "../statistics/statistics";
 import { money } from "../../shared/utils/money";
 import { ExpenseList } from "../expense/ExpenseList";
@@ -43,7 +43,7 @@ export function HomePage({
           .slice(0, 3)
           .map((c) => (
             <div key={c.code}>
-              <small>{categoryLabels[c.code]}</small>
+              <small>{categoryLabel(c.code)}</small>
               <strong>{money(c.amount)}</strong>
             </div>
           ))}

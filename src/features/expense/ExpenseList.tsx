@@ -1,5 +1,5 @@
 import type { Expense } from "../../domain/expense";
-import { categoryLabels } from "../../domain/expense";
+import { categoryLabel } from "../../domain/expense";
 import { money } from "../../shared/utils/money";
 export function ExpenseList({
   rows,
@@ -14,14 +14,14 @@ export function ExpenseList({
         <li key={row.id}>
           <button onClick={() => onEdit(row)}>
             <span className="expense-icon" aria-hidden="true">
-              {categoryLabels[row.categoryCode].slice(0, 1)}
+              {categoryLabel(row.categoryCode).slice(0, 1)}
             </span>
             <span className="expense-description">
               <strong>
-                {row.merchant || categoryLabels[row.categoryCode]}
+                {row.merchant || categoryLabel(row.categoryCode)}
               </strong>
               <small>
-                {row.spentOn} · {categoryLabels[row.categoryCode]}
+                {row.spentOn} · {categoryLabel(row.categoryCode)}
               </small>
               {row.memo && <small>{row.memo}</small>}
             </span>

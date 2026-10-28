@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
 import type { Expense } from "../../domain/expense";
-import { EXPENSE_CATEGORIES, categoryLabels } from "../../domain/expense";
+import { EXPENSE_CATEGORIES, categoryLabel } from "../../domain/expense";
 import { expenseInputSchema } from "../../domain/expenseSchema";
 import { repository } from "../../data/expenseRepository";
 import { localDate } from "../../shared/utils/dates";
@@ -27,6 +28,13 @@ export function ExpenseEditor({
   });
   const initial = initialRef.current;
   const [form, setForm] = useState(initial);
+  const customCategories = useLiveQuery(() => repository.categories(), [], []);
+  const categories = [...new Set([...EXPENSE_CATEGORIES, ...customCategories,
+    ...(expense ? [expense.categoryCode] : []),
+  ])];
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryError, setCategoryError] = useState("");
   const amountInput = useRef<HTMLInputElement>(null);
   const amountCaret = useRef<number | null>(null);
   const formattedAmount = form.amount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -49,7 +57,7 @@ export function ExpenseEditor({
     onBusy(busy);
     return () => onBusy(false);
   }, [busy, onBusy]);
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial);
+  const dirty = JSON.stringify(form) !== JSON.stringify(initial) || categoryName !== "";
   useEffect(() => {
     onDirty(dirty);
     const handler = (e: BeforeUnloadEvent) => {
@@ -70,6 +78,27 @@ export function ExpenseEditor({
   };
   const set = (key: keyof typeof form, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
+  async function addCategory() {
+    if (lock.current) return;
+    if (!categoryName.trim() || categoryName.trim().length > 20) {
+      setCategoryError("카테고리 이름을 1~20자로 입력하세요.");
+      return;
+    }
+    lock.current = true;
+    setBusy(true);
+    setCategoryError("");
+    try {
+      const code = await repository.addCategory(categoryName);
+      set("categoryCode", code);
+      setCategoryName("");
+      setAddingCategory(false);
+    } catch {
+      setCategoryError("카테고리를 저장하지 못했어요. 이름과 저장소를 확인하고 다시 시도하세요.");
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (lock.current) return;
@@ -157,7 +186,7 @@ export function ExpenseEditor({
             </label>
             <fieldset className="category-grid">
               <legend>카테고리</legend>
-              {EXPENSE_CATEGORIES.map((code) => (
+              {categories.map((code) => (
                 <label
                   className={form.categoryCode === code ? "selected" : ""}
                   key={code}
@@ -170,10 +199,41 @@ export function ExpenseEditor({
                     onChange={() => set("categoryCode", code)}
                     required
                   />
-                  {categoryLabels[code]}
+                  {categoryLabel(code)}
                 </label>
               ))}
             </fieldset>
+            {addingCategory ? (
+              <div className="category-create">
+                <label>
+                  새 카테고리 이름
+                  <input
+                    autoFocus
+                    value={categoryName}
+                    maxLength={20}
+                    placeholder="예: 운동, 반려동물"
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                        e.preventDefault();
+                        void addCategory();
+                      }
+                    }}
+                  />
+                </label>
+                <button type="button" onClick={() => void addCategory()}>카테고리 추가</button>
+                <button type="button" onClick={() => {
+                  setAddingCategory(false);
+                  setCategoryName("");
+                  setCategoryError("");
+                }}>취소</button>
+                {categoryError && <p role="alert" className="error">{categoryError}</p>}
+              </div>
+            ) : (
+              <button className="full" type="button" onClick={() => setAddingCategory(true)}>
+                + 카테고리 직접 추가
+              </button>
+            )}
             <label>
               날짜
               <input

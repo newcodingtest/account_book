@@ -6,7 +6,8 @@ export function aggregate(rows: Expense[]) {
   const days: Record<string, number> = {};
   for (const row of rows)
     days[row.spentOn] = safeSum([days[row.spentOn] || 0, row.amount]);
-  const categories = EXPENSE_CATEGORIES.map((code, index) => {
+  const codes = [...new Set([...EXPENSE_CATEGORIES, ...rows.map((r) => r.categoryCode)])];
+  const categories = codes.map((code, index) => {
     const amount = safeSum(
       rows.filter((r) => r.categoryCode === code).map((r) => r.amount),
     );

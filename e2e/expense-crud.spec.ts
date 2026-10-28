@@ -1,4 +1,22 @@
 import { test, expect } from "@playwright/test";
+test("직접 추가한 카테고리 저장, 수정과 재사용", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "+ 지출 추가" }).click();
+  await page.getByLabel("금액 (원)").fill("30000");
+  await page.getByRole("button", { name: "+ 카테고리 직접 추가" }).click();
+  await page.getByRole("button", { name: "카테고리 추가", exact: true }).click();
+  await expect(page.getByRole("dialog").getByRole("alert")).toContainText("1~20자");
+  await page.getByLabel("새 카테고리 이름").fill("운동");
+  await page.getByRole("button", { name: "카테고리 추가", exact: true }).click();
+  await expect(page.getByLabel("운동", { exact: true })).toBeChecked();
+  await page.getByRole("button", { name: "저장", exact: true }).click();
+  await page.reload();
+  await page.getByRole("button", { name: /운동.*30,000/ }).click();
+  await expect(page.getByLabel("운동", { exact: true })).toBeChecked();
+  await page.getByRole("button", { name: "닫기", exact: true }).click();
+  await page.getByRole("button", { name: "+ 지출 추가" }).click();
+  await expect(page.getByLabel("운동", { exact: true })).toBeVisible();
+});
 test("지출 CRUD와 새로고침 영속성", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "+ 지출 추가" }).click();
